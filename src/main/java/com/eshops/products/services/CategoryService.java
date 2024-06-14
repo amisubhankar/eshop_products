@@ -5,9 +5,10 @@ import com.eshops.products.dtos.CategoryResponseDto;
 import com.eshops.products.exceptions.CategoryAlreadyPresentException;
 import com.eshops.products.exceptions.CategoryNotFoundException;
 import com.eshops.products.models.Category;
-import com.eshops.products.projections.CategoryProjection;
-import com.eshops.products.repositories.CategoryRepository;
+import com.eshops.products.projections.ICategoryProjection;
+import com.eshops.products.repositories.ICategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,7 +18,10 @@ import java.util.Optional;
 @Service
 public class CategoryService {
     @Autowired
-    private CategoryRepository categoryRepository;
+    private ICategoryRepository categoryRepository;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     public void createCategory(CategoryRequestDto categoryRequestDto) throws CategoryAlreadyPresentException {
         Optional<Category> optionalCategory = categoryRepository.findByName(categoryRequestDto.getName());
@@ -57,13 +61,18 @@ public class CategoryService {
     }
 
     public List<CategoryResponseDto> getCategories() {
-        List<CategoryProjection> categories = categoryRepository.findAllCategories();
-        List<CategoryResponseDto> result = new ArrayList<>();
 
-        for(CategoryProjection category : categories){
-            result.add(new CategoryResponseDto(category.getId(), category.getName(), category.getAvailableProducts()));
+        if(redisTemplate.opsForHash().hasKey("foo", "something") == false) {
+            List<ICategoryProjection> categories = categoryRepository.findAllCategories();
+            List<CategoryResponseDto> result = new ArrayList<>();
+
+            for (ICategoryProjection category : categories) {
+                result.add(new CategoryResponseDto(category.getId(), category.getName(), category.getAvailableProducts()));
+            }
+
+            redisTemplate.opsForHash().put("foo", "something", result);
         }
 
-        return result;
+        return (List<CategoryResponseDto>) redisTemplate.opsForHash().get("foo", "something");
     }
 }

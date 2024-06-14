@@ -1,6 +1,6 @@
 package com.eshops.products.projections;
 
-public interface CategoryProjection {
+public interface ICategoryProjection {
     Long getId();
     String getName();
     Integer getAvailableProducts();
