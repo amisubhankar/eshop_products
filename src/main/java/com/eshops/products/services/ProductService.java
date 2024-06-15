@@ -91,15 +91,18 @@ public class ProductService {
     }
 
     public List<ProductResponseDto> getProducts(){
+        if(redisTemplate.opsForHash().hasKey("products", "something") == false) {
+            List<ProductResponseDto> products = new ArrayList<>();
 
-        List<ProductResponseDto> products = new ArrayList<>();
+            for (Products product : productRepository.findAll()) {
+                products.add(new ProductResponseDto(product.getId(), product.getName(), product.getDescription(),
+                        product.getImage(), product.getPrice(), product.getAvailableQuantity(),
+                        product.getCategory().getId()));
+            }
 
-        for (Products product : productRepository.findAll()) {
-            products.add(new ProductResponseDto(product.getId(), product.getName(), product.getDescription(),
-                    product.getImage(), product.getPrice(), product.getAvailableQuantity(),
-                    product.getCategory().getId()));
+            redisTemplate.opsForHash().put("products", "something", products);
         }
 
-        return products;
+        return (List<ProductResponseDto>) redisTemplate.opsForHash().get("products", "something");
     }
 }

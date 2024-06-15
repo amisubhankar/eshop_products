@@ -11,7 +11,8 @@ import java.io.Serializable;
 @Getter
 @Setter
 @AllArgsConstructor
-public class ProductResponseDto {
+@JsonSerialize
+public class ProductResponseDto implements Serializable{
     private Long id;
     private String name;
     private String description;
