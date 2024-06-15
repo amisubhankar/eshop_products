@@ -48,4 +48,12 @@ public class ProductController {
         return ResponseEntity.ok().body("Product deleted successfully !!");
     }
 
+    @GetMapping("/{catgId}")
+    public ResponseEntity<List<ProductResponseDto>> getProductByCategory(@PathVariable("catgId") Long catgId)
+            throws CategoryNotFoundException {
+        List<ProductResponseDto> products = productService.getProductByCategory(catgId);
+
+        return ResponseEntity.ok().body(products);
+    }
+
 }

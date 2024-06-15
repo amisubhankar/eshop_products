@@ -105,4 +105,23 @@ public class ProductService {
 
         return (List<ProductResponseDto>) redisTemplate.opsForHash().get("products", "something");
     }
+
+    public List<ProductResponseDto> getProductByCategory(Long catgId) throws CategoryNotFoundException {
+        Optional<Category> optionalCategory = categoryRepository.findById(catgId);
+        if(optionalCategory.isEmpty()){
+            throw new CategoryNotFoundException();
+        }
+
+        Optional<List<Products>> optionalProducts = productRepository.findByCategory(optionalCategory.get());
+
+        List<ProductResponseDto> products = new ArrayList<>();
+
+        for (Products product : optionalProducts.get()) {
+            products.add(new ProductResponseDto(product.getId(), product.getName(), product.getDescription(),
+                    product.getImage(), product.getPrice(), product.getAvailableQuantity(),
+                    product.getCategory().getId()));
+        }
+
+        return products;
+    }
 }
