@@ -62,7 +62,7 @@ public class CategoryService {
 
     public List<CategoryResponseDto> getCategories() {
 
-        if(redisTemplate.opsForHash().hasKey("foo", "something") == false) {
+        if(redisTemplate.opsForHash().hasKey("categories", "something") == false) {
             List<ICategoryProjection> categories = categoryRepository.findAllCategories();
             List<CategoryResponseDto> result = new ArrayList<>();
 
@@ -70,7 +70,7 @@ public class CategoryService {
                 result.add(new CategoryResponseDto(category.getId(), category.getName(), category.getAvailableProducts()));
             }
 
-            redisTemplate.opsForHash().put("foo", "something", result);
+            redisTemplate.opsForHash().put("categories", "something", result);
         }
 
         return (List<CategoryResponseDto>) redisTemplate.opsForHash().get("foo", "something");

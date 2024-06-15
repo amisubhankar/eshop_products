@@ -11,7 +11,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class Products extends BaseModel{
+@NoArgsConstructor
+public class Products extends BaseModel {
     private String description;
     private String image;
     private float price;
