@@ -124,4 +124,22 @@ public class ProductService {
 
         return products;
     }
+
+    public ProductResponseDto getProductById(Long id) throws ProductNotFoundException {
+        Optional<Products> optionalProduct = productRepository.findById(id);
+
+        if(optionalProduct.isEmpty()){
+            throw new ProductNotFoundException();
+        }
+
+        Products products = optionalProduct.get();
+
+        return new ProductResponseDto(products.getId(), products.getName(), products.getDescription(),
+                products.getImage(), products.getPrice(), products.getAvailableQuantity(),
+                products.getCategory().getId());
+    }
+
+    public void updateProductQuantity(Long prodId, int updatedQuantity) {
+        productRepository.updateQuantity(prodId, updatedQuantity);
+    }
 }

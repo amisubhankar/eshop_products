@@ -9,7 +9,6 @@ import com.eshops.products.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,6 +40,12 @@ public class ProductController {
         return ResponseEntity.ok().body("Product updated successfully !!");
     }
 
+    @PutMapping("/update/quantity")
+    public ResponseEntity<String> updateProductQuantity(@RequestParam(name = "prodId") Long prodId, @RequestParam(name = "quantity") int updatedQuantity){
+        productService.updateProductQuantity(prodId, updatedQuantity);
+        return ResponseEntity.ok().body("Product quantity updated successfully !!");
+    }
+
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteProduct(@PathVariable("id") Long id) throws ProductNotFoundException {
         productService.deleteProduct(id);
@@ -48,12 +53,19 @@ public class ProductController {
         return ResponseEntity.ok().body("Product deleted successfully !!");
     }
 
-    @GetMapping("/{catgId}")
+    @GetMapping("/bycategory/{catgId}")
     public ResponseEntity<List<ProductResponseDto>> getProductByCategory(@PathVariable("catgId") Long catgId)
             throws CategoryNotFoundException {
         List<ProductResponseDto> products = productService.getProductByCategory(catgId);
 
         return ResponseEntity.ok().body(products);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductResponseDto> getProductById(@PathVariable("id") Long id)
+            throws ProductNotFoundException {
+
+        return ResponseEntity.ok().body(productService.getProductById(id));
     }
 
 }
