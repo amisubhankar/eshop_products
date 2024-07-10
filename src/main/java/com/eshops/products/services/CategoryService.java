@@ -73,6 +73,6 @@ public class CategoryService {
             redisTemplate.opsForHash().put("categories", "something", result);
         }
 
-        return (List<CategoryResponseDto>) redisTemplate.opsForHash().get("foo", "something");
+        return (List<CategoryResponseDto>) redisTemplate.opsForHash().get("categories", "something");
     }
 }
